@@ -1,0 +1,29 @@
+name: Test Runner
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  execute:
+    uses: interceptorxx/interceptorxx.github.io/.github/workflows/tests.yaml@main
+    with:
+      username: interceptorxx
+    secrets:
+      token: ${{ secrets.envPAT }}
+
+  artifact:
+    if: always()
+    needs: [execute]
+    uses: interceptorxx/interceptorxx.github.io/.github/workflows/deploy.yaml@main
+    with:
+      username: interceptorxx
+    secrets:
+      token: ${{ secrets.envPAT }}

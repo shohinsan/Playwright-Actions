@@ -1,0 +1,57 @@
+on:
+  workflow_call:
+    inputs:
+      username:
+        required: true
+        type: string
+    secrets:
+      token:
+        required: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: myapp-qa    
+    container:
+      image: mcr.microsoft.com/playwright:v1.40.0-jammy
+  # strategy:
+    # fail-fast: false
+    # matrix:
+      # shard: [1/2, 2/2] # max. = 4, recommended
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache npm
+        id: cached-dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./myapp-qa/package-lock.json
+            ./node_modules/
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-build
+            npm-${{ runner.os }}-
+
+      - name: Install Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        if: steps.cached-dependencies.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Run Playwright tests
+        run: npx playwright test src/ # --shard ${{ matrix.shard }}
+
+      - name: Upload Playwright report
+        uses: actions/upload-pages-artifact@v2
+        if: always()
+        with:
+          name: github-pages
+          path: myapp-qa/playwright-report
+          retention-days: 30

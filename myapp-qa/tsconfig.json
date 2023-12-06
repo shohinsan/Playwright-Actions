@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": true,
+		"lib": ["ESNext"],
+		"module": "esnext",
+		"target": "esnext",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true,
+		"moduleResolution": "bundler",
+		"baseUrl": ".",
+		"paths": {
+			// Playwright
+			"@auth/*": ["src/browser/pom/auth/*"],
+			"@app/*": ["src/browser/pom/app/*"],
+			"@vitals/*": ["src/browser/web-vitals/*"],
+			"@utils/*": ["src/browser/utils/*"],
+			// Playwright
+			"@seed/*": ["src/vitest/seed/*"],
+		},
+		"rules": {
+			"@typescript-eslint/no-floating-promises": "error",
+			"@typescript-eslint/no-misused-promises": "error",
+		},
+	},
+}
